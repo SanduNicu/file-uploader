@@ -3,6 +3,7 @@ import { UploadFilesArgs } from "./types";
 
 export function uploadFiles({
   files,
+  onSuccess,
   fetchOptions,
   setIsLoading,
 }: UploadFilesArgs) {
@@ -23,8 +24,9 @@ export function uploadFiles({
     },
     ...remainingOptions,
   })
-    // .then((res) => res.json())
-    // .then(() => onSuccess(files))
+    .then(() => {
+      onSuccess();
+    })
     // .catch(() => onFail(files))
     .finally(() => setIsLoading(false));
 }
