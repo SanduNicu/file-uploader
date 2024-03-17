@@ -1,10 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import Welcome from './Welcome.tsx'
-import './index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import FileUploader from "./components/fileUploader";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const fetchOptions = {
+  url: "http://localhost:5173/api/upload",
+};
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <Welcome />
-  </React.StrictMode>,
-)
+    <FileUploader fetchOptions={fetchOptions} />
+  </React.StrictMode>
+);
