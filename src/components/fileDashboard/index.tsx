@@ -11,12 +11,15 @@ const fetchOptions = {
 export default function FileDashboard() {
   const [files, setFiles] = useState<File[]>([]);
 
-  const onSubmit = useCallback(
-    ({ savedFiles }: SubmitResult) => {
-      setFiles([...files, ...savedFiles]);
-    },
-    [files]
-  );
+  const onSubmit = useCallback(({ savedFiles }: SubmitResult) => {
+    setFiles((files) => {
+      const filesObject = [...files, ...savedFiles].reduce(
+        (acc, val) => ({ ...acc, [val.name]: val }),
+        {}
+      );
+      return Object.values(filesObject);
+    });
+  }, []);
 
   useEffect(() => {
     fetchFiles()

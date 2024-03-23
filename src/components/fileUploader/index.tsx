@@ -16,6 +16,8 @@ function FileUploader(props: FileUploaderProps) {
   const [isLoading, setIsLoading] = useState(false);
   const showFileInfo = !!files.length;
 
+  console.log("rerender");
+
   const onClick = useCallback(() => {
     if (hiddenInput.current) hiddenInput.current.click();
   }, []);
