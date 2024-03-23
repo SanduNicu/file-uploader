@@ -19,11 +19,17 @@ export function getChunks(files: File[]) {
 }
 
 export async function uploadFiles({ files, fetchOptions }: UploadFilesArgs) {
+  const failedFiles = <File[]>[];
+  const savedFiles = <File[]>[];
   const chunks = getChunks(files);
 
   for (const chunk of chunks) {
-    await postChunk(chunk, fetchOptions);
+    await postChunk(chunk, fetchOptions)
+      .then((files) => savedFiles.push(...files))
+      .catch((files) => failedFiles.push(...files));
   }
+
+  return { savedFiles, failedFiles };
 }
 
 export function postChunk(chunk: Chunk, fetchOptions: FetchOptions) {
@@ -31,7 +37,6 @@ export function postChunk(chunk: Chunk, fetchOptions: FetchOptions) {
   const formData = new FormData();
 
   chunk.files.forEach((file) => {
-    console.log(file, file.name);
     formData.append("file", file, file.name);
   });
 
@@ -39,7 +44,9 @@ export function postChunk(chunk: Chunk, fetchOptions: FetchOptions) {
     method: "POST",
     body: formData,
     ...remainingOptions,
-  });
+  })
+    .then(() => chunk.files)
+    .catch(() => chunk.files);
 }
 
 export function validateFiles(files: File[]) {

@@ -1,14 +1,15 @@
 import { memo, useCallback, useRef, useState } from "react";
 import { uploadFiles, validateFiles } from "./utils";
-import { FetchOptions } from "./types";
+import { FetchOptions, SubmitResult } from "./types";
 import styles from "./styles.module.scss";
 
 interface FileUploaderProps {
   fetchOptions?: FetchOptions;
+  onSubmit: (result: SubmitResult) => void;
 }
 
 function FileUploader(props: FileUploaderProps) {
-  const { fetchOptions = {} } = props;
+  const { fetchOptions = {}, onSubmit } = props;
   const hiddenInput = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState("");
@@ -25,12 +26,14 @@ function FileUploader(props: FileUploaderProps) {
     }
 
     setIsLoading(true);
-    await uploadFiles({
+    const result = await uploadFiles({
       files,
       fetchOptions,
     });
+    onSubmit(result);
+    setFiles([]);
     setIsLoading(false);
-  }, [files, fetchOptions]);
+  }, [files, fetchOptions, onSubmit]);
 
   const handleFileChange = useCallback(
     (ev: React.ChangeEvent<HTMLInputElement>) => {

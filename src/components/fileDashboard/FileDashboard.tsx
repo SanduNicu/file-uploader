@@ -1,18 +1,26 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import List from "../List/List";
 import FileUploader from "../fileUploader";
+import { SubmitResult } from "../fileUploader/types";
 
 const fetchOptions = {
   url: "http://localhost:5173/api/upload",
 };
 
 export default function FileDashboard() {
-  const [savedFiles, setSavedFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+
+  const onSubmit = useCallback(
+    ({ savedFiles }: SubmitResult) => {
+      setFiles([...files, ...savedFiles]);
+    },
+    [files]
+  );
 
   useEffect(() => {
     fetch("http://localhost:5173/api/files")
       .then((res) => res.json())
-      .then(({ files }) => setSavedFiles(files))
+      .then(({ files }) => setFiles(files))
       .catch(() => {
         console.error("Feching files failed!");
       });
@@ -20,8 +28,8 @@ export default function FileDashboard() {
 
   return (
     <div>
-      <List files={savedFiles} />
-      <FileUploader fetchOptions={fetchOptions} />
+      <List files={files} />
+      <FileUploader fetchOptions={fetchOptions} onSubmit={onSubmit} />
     </div>
   );
 }

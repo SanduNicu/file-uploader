@@ -11,3 +11,8 @@ export interface Chunk {
   files: File[];
   totalSize: number;
 }
+
+export interface SubmitResult {
+  savedFiles: File[];
+  failedFiles: File[];
+}
