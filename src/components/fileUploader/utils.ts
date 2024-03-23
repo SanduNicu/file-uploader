@@ -31,6 +31,7 @@ export function postChunk(chunk: Chunk, fetchOptions: FetchOptions) {
   const formData = new FormData();
 
   chunk.files.forEach((file) => {
+    console.log(file, file.name);
     formData.append("file", file, file.name);
   });
 

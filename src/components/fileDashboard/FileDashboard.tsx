@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import List from "../List/List";
 import FileUploader from "../fileUploader";
 
@@ -8,6 +8,15 @@ const fetchOptions = {
 
 export default function FileDashboard() {
   const [savedFiles, setSavedFiles] = useState<File[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5173/api/files")
+      .then((res) => res.json())
+      .then(({ files }) => setSavedFiles(files))
+      .catch(() => {
+        console.error("Feching files failed!");
+      });
+  }, []);
 
   return (
     <div>

@@ -6,5 +6,12 @@ export default function List(props: ListProps) {
 
   if (!files.length) return <div>No current files</div>;
 
-  return <div>List</div>;
+  return (
+    <div className="p-3">
+      <div className="text-xl font-bold">Files:</div>
+      {files.map((file) => (
+        <div key={file.name}>{file.name}</div>
+      ))}
+    </div>
+  );
 }
