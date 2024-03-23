@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import List from "../List/List";
-import FileUploader from "../fileUploader";
+import FileUploader from "@components/fileUploader";
+import List from "@components/List";
 import { SubmitResult } from "../fileUploader/types";
+import { fetchFiles } from "./utils";
 
 const fetchOptions = {
   url: "http://localhost:5173/api/upload",
@@ -18,8 +19,7 @@ export default function FileDashboard() {
   );
 
   useEffect(() => {
-    fetch("http://localhost:5173/api/files")
-      .then((res) => res.json())
+    fetchFiles()
       .then(({ files }) => setFiles(files))
       .catch(() => {
         console.error("Feching files failed!");

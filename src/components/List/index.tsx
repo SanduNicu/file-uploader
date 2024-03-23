@@ -1,7 +1,9 @@
+import { memo } from "react";
+
 interface ListProps {
   files: File[];
 }
-export default function List(props: ListProps) {
+function List(props: ListProps) {
   const { files } = props;
 
   if (!files.length) return <div>No current files</div>;
@@ -15,3 +17,5 @@ export default function List(props: ListProps) {
     </div>
   );
 }
+
+export default memo(List);
