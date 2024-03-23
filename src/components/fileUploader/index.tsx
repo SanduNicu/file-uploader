@@ -19,22 +19,18 @@ function FileUploader(props: FileUploaderProps) {
     if (hiddenInput.current) hiddenInput.current.click();
   }, []);
 
-  const onSuccess = useCallback(() => {
-    setFiles([]);
-  }, []);
-
-  const handleFileSubmit = useCallback(() => {
+  const handleFileSubmit = useCallback(async () => {
     if (!files.length) {
       return;
     }
 
-    uploadFiles({
+    setIsLoading(true);
+    await uploadFiles({
       files,
-      onSuccess,
       fetchOptions,
-      setIsLoading,
     });
-  }, [files, fetchOptions, onSuccess]);
+    setIsLoading(false);
+  }, [files, fetchOptions]);
 
   const handleFileChange = useCallback(
     (ev: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,34 +1,44 @@
 import { MAX_CHUNK_SIZE, SIZE_ERROR } from "./constants";
-import { UploadFilesArgs } from "./types";
+import { Chunk, FetchOptions, UploadFilesArgs } from "./types";
 
-export function uploadFiles({
-  files,
-  onSuccess,
-  fetchOptions,
-  setIsLoading,
-}: UploadFilesArgs) {
+export function getChunks(files: File[]) {
+  const chunks = [{ files: [] as File[], totalSize: 0 }];
+
+  for (const file of files) {
+    const lastChunk = chunks.at(-1) || chunks[0];
+    if (lastChunk?.totalSize + file.size < MAX_CHUNK_SIZE) {
+      lastChunk?.files.push(file);
+      lastChunk.totalSize += file.size;
+    } else {
+      const newChunk = { files: [file], totalSize: file.size };
+      chunks.push(newChunk);
+    }
+  }
+
+  return chunks;
+}
+
+export async function uploadFiles({ files, fetchOptions }: UploadFilesArgs) {
+  const chunks = getChunks(files);
+
+  for (const chunk of chunks) {
+    await postChunk(chunk, fetchOptions);
+  }
+}
+
+export function postChunk(chunk: Chunk, fetchOptions: FetchOptions) {
   const { url = "", ...remainingOptions } = fetchOptions;
-
   const formData = new FormData();
-  [...files].forEach((file) => {
-    formData.append("file", file);
+
+  chunk.files.forEach((file) => {
+    formData.append("file", file, file.name);
   });
 
-  setIsLoading(true);
-  fetch(url, {
+  return fetch(url, {
     method: "POST",
     body: formData,
-    headers: {
-      // "content-type": "multipart/form-data",
-      // "content-length": "",
-    },
     ...remainingOptions,
-  })
-    .then(() => {
-      onSuccess();
-    })
-    // .catch(() => onFail(files))
-    .finally(() => setIsLoading(false));
+  });
 }
 
 export function validateFiles(files: File[]) {

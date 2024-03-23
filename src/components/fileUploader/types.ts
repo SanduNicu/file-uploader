@@ -4,7 +4,10 @@ export interface FetchOptions extends RequestInit {
 
 export interface UploadFilesArgs {
   files: File[];
-  onSuccess: () => void;
   fetchOptions: FetchOptions;
-  setIsLoading: (isLoading: boolean) => void;
+}
+
+export interface Chunk {
+  files: File[];
+  totalSize: number;
 }
